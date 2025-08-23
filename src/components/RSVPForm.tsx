@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProgressBar from "@/components/ProgressBar";
 import Step1PartySearch from "@/components/PartySearch";
 import Step3PrayerRSVP from "@/components/CombinedRSVP";
@@ -205,10 +205,15 @@ const RSVPForm: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentStep]);
+
   const handleNext = () => {
     if (canGoNext) {
       setCurrentStep(currentStep + 1);
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleBack = () => {
@@ -225,6 +230,9 @@ const RSVPForm: React.FC = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
+
+    // scroll to top on step change
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const canGoNext =
