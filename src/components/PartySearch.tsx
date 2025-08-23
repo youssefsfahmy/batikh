@@ -28,6 +28,7 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
     try {
       const results = await searchParties(term);
       console.log("Search results:", results);
+
       setSearchResults(results);
       setHasSearched(true);
     } catch (error) {
@@ -69,7 +70,7 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Enter your name..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-1000 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg  focus:border-transparent focus:ring-2 focus:ring-primary-50"
         />
         {isLoading && (
           <div className="absolute right-3 top-3">

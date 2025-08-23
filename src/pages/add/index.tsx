@@ -24,22 +24,13 @@ interface PartyData {
 interface FormState {
   partyId: string;
   labelTemplate: string;
-  customSuffix: string;
   invitedToPrayer: boolean;
   invitedToParty: boolean;
   members: Member[];
 }
 
 // Label template options
-const LABEL_TEMPLATES = [
-  "Bride's family – {Custom}",
-  "Groom's family – {Custom}",
-  "Bride's friends – {Custom}",
-  "Groom's friends – {Custom}",
-  "Coworkers – {Custom}",
-  "Neighbors – {Custom}",
-  "Other – {Custom}",
-];
+const LABEL_TEMPLATES = ["Sandra's family", "Youssef's family", "Friends"];
 
 // Utility functions
 const tokenize = (str: string): string[] => {
@@ -65,8 +56,8 @@ const buildSearchIndex = (label: string, members: Member[]): string[] => {
   return Array.from(tokens);
 };
 
-const formatLabel = (template: string, custom: string): string => {
-  return template.replace("{Custom}", custom || "Group");
+const formatLabel = (template: string): string => {
+  return template.replace("{Custom}", "Group");
 };
 
 const generateMemberIds = (count: number): string[] => {
@@ -80,9 +71,8 @@ const PartyCreator: React.FC = () => {
   const [formState, setFormState] = useState<FormState>({
     partyId: `pty-${Math.random().toString(36).substring(2, 8)}`,
     labelTemplate: LABEL_TEMPLATES[0],
-    customSuffix: "",
     invitedToPrayer: false,
-    invitedToParty: false,
+    invitedToParty: true,
     members: [{ firstName: "", lastName: "", email: "" }],
   });
 
@@ -137,7 +127,6 @@ const PartyCreator: React.FC = () => {
     setFormState({
       partyId: "",
       labelTemplate: LABEL_TEMPLATES[0],
-      customSuffix: "",
       invitedToPrayer: false,
       invitedToParty: false,
       members: [{ firstName: "", lastName: "", email: "" }],
@@ -188,10 +177,7 @@ const PartyCreator: React.FC = () => {
       );
 
       // Build final label
-      const label = formatLabel(
-        formState.labelTemplate,
-        formState.customSuffix
-      );
+      const label = formatLabel(formState.labelTemplate);
 
       // Build search index
       const searchIndex = buildSearchIndex(label, validMembers);
@@ -210,6 +196,10 @@ const PartyCreator: React.FC = () => {
       await setDoc(partyRef, partyData, { merge: true });
 
       showMessage("success", `Party saved successfully: ${formState.partyId}`);
+      setFormState((prev) => ({
+        ...prev,
+        partyId: `pty-${Math.random().toString(36).substring(2, 8)}`,
+      }));
     } catch (error) {
       console.error("Error saving party:", error);
       showMessage(
@@ -223,11 +213,7 @@ const PartyCreator: React.FC = () => {
     }
   };
 
-  const currentLabel = formatLabel(
-    formState.labelTemplate,
-    formState.customSuffix
-  );
-
+  const currentLabel = formState.labelTemplate;
   return (
     <main className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto max-w-2xl px-4">
@@ -292,17 +278,7 @@ const PartyCreator: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    value={formState.customSuffix}
-                    onChange={(e) =>
-                      updateFormState({ customSuffix: e.target.value })
-                    }
-                    placeholder="Custom suffix"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-1000 focus:border-primary-1000"
-                  />
-                </div>
+
                 <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
                   <strong>Preview:</strong> {currentLabel}
                 </div>
@@ -327,17 +303,6 @@ const PartyCreator: React.FC = () => {
                   <span className="ml-2 text-gray-700">
                     Invited to Prayer Ceremony
                   </span>
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formState.invitedToParty}
-                    onChange={(e) =>
-                      updateFormState({ invitedToParty: e.target.checked })
-                    }
-                    className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-1000"
-                  />
-                  <span className="ml-2 text-gray-700">Invited to Party</span>
                 </label>
               </div>
             </div>

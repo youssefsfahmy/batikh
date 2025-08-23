@@ -84,6 +84,43 @@ export async function getParty(partyId: string): Promise<Party | null> {
 }
 
 /**
+ * Get a party by confirmation code
+ */
+export async function getPartyByConfirmationCode(
+  confirmationCode: string
+): Promise<Party | null> {
+  try {
+    const partiesRef = collection(db, "parties");
+    const snapshot = await getDocs(partiesRef);
+
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      console.log("Checking party:", data);
+      if (data.confirmationCode === confirmationCode) {
+        return {
+          id: doc.id,
+          label: data.label,
+          members: data.members || [],
+          // Include RSVP data if present
+          partyId: data.partyId,
+          partyLabel: data.partyLabel,
+          invitedToPrayer: data.invitedToPrayer,
+          invitedToParty: data.invitedToParty,
+          confirmationCode: data.confirmationCode,
+          createdAt: data.createdAt,
+          guests: data.guests,
+        };
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching party by confirmation code:", error);
+    return null;
+  }
+}
+
+/**
  * Generate a random confirmation code
  */
 function generateConfirmationCode(): string {
@@ -115,6 +152,8 @@ export async function submitRSVP(
     confirmationCode,
     createdAt,
   };
+
+  console.log("Submitting RSVP data:", rsvpData);
 
   await setDoc(partyRef, rsvpData, { merge: true });
   return confirmationCode;

@@ -1,5 +1,6 @@
 import React from "react";
 import type { Guest, GuestRSVP, Party } from "@/types/rsvp";
+import { useRouter } from "next/router";
 
 interface Step6ConfirmationProps {
   party: Party;
@@ -16,11 +17,13 @@ const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
   guests,
   rsvpsByGuest,
   confirmationCode,
-  isSubmitted,
+  // isSubmitted,
   onSubmit,
   isSubmitting,
 }) => {
-  if (isSubmitted && confirmationCode) {
+  const router = useRouter();
+
+  if (confirmationCode) {
     return (
       <div className="text-center space-y-6">
         <div className="text-primary mb-4">
@@ -62,6 +65,14 @@ const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
             If you need to make changes to your RSVP, please contact us
             directly.
           </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
+          <button
+            onClick={() => router.push("/")}
+            className="bg-primary hover:bg-primary-dark text-white font-medium py-3 px-6 rounded-lg transition-colors"
+          >
+            Back to Event Details
+          </button>
         </div>
       </div>
     );

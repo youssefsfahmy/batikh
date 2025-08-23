@@ -95,7 +95,7 @@ const RSVPForm: React.FC = () => {
           guestId: member.id,
           firstName: member.firstName,
           lastName: member.lastName,
-          email: member.email,
+          email: member.email || "",
         };
         return acc;
       }, {} as Record<string, GuestRSVP>),
@@ -210,6 +210,11 @@ const RSVPForm: React.FC = () => {
   }, [currentStep]);
 
   const handleNext = () => {
+    console.log("handleNext called", formState);
+    if (currentStep === 1 && formState.party?.confirmationCode) {
+      window.location.href = `/rsvp/${formState.party.confirmationCode}`;
+      return;
+    }
     if (canGoNext) {
       setCurrentStep(currentStep + 1);
     }
@@ -217,6 +222,9 @@ const RSVPForm: React.FC = () => {
   };
 
   const handleBack = () => {
+    if (currentStep === 1) {
+      window.location.href = "/"; // Redirect to home page
+    }
     if (currentStep === 2) {
       setFormState((prev) => ({
         ...prev,
@@ -237,7 +245,11 @@ const RSVPForm: React.FC = () => {
 
   const canGoNext =
     isStepValid(currentStep) && currentStep < getCurrentSteps().length;
-  const canGoBack = currentStep > 1 && !formState.confirmationCode;
+  const canGoBack =
+    currentStep === 1 ||
+    (currentStep > 1 &&
+      !formState.confirmationCode &&
+      !formState.party?.confirmationCode);
 
   const renderCurrentStep = () => {
     if (!formState.party) {
@@ -293,7 +305,9 @@ const RSVPForm: React.FC = () => {
             party={formState.party}
             guests={formState.party.members}
             rsvpsByGuest={formState.rsvpsByGuest}
-            confirmationCode={formState.confirmationCode}
+            confirmationCode={
+              formState.confirmationCode || formState.party.confirmationCode
+            }
             isSubmitted={!!formState.confirmationCode}
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
@@ -304,8 +318,8 @@ const RSVPForm: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 border border-neutral-300">
+      <div className="max-w-2xl mx-auto px-2">
+        <div className="bg-white rounded-lg shadow-lg p-6 border border-neutral-300">
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-secondary-dark mb-2">
