@@ -98,7 +98,6 @@ export async function submitRSVP(
   partyLabel: string | undefined,
   invitedToPrayer: boolean,
   invitedToParty: boolean,
-  submittingGuestId: string | undefined,
   rsvpsByGuest: Record<string, GuestRSVP>
 ): Promise<string> {
   const confirmationCode = generateConfirmationCode();
@@ -112,7 +111,6 @@ export async function submitRSVP(
     partyLabel,
     invitedToPrayer,
     invitedToParty,
-    submittingGuestId,
     guests: Object.values(rsvpsByGuest),
     confirmationCode,
     createdAt,

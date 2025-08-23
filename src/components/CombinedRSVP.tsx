@@ -10,19 +10,18 @@ interface Step3PrayerRSVPProps {
   invitedToPrayer: boolean;
 }
 
-const Step3PrayerRSVP: React.FC<Step3PrayerRSVPProps> = ({
+const CombinedRSVP: React.FC<Step3PrayerRSVPProps> = ({
   guests,
   rsvpsByGuest,
   onRSVPChange,
   onMealChange,
-  onDietaryNotesChange,
   invitedToPrayer,
 }) => {
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-medium text-gray-900 mb-2">RSVP</h3>
-        <p className="text-gray-600 mb-4">Please let us know your plans:</p>
+        <p className="text-foreground mb-4">Please let us know your plans:</p>
       </div>
 
       <div className="space-y-6">
@@ -54,7 +53,7 @@ const Step3PrayerRSVP: React.FC<Step3PrayerRSVPProps> = ({
                             rsvp?.rsvpParty === "yes"
                           }
                           onChange={() => onRSVPChange(guest.id, "yes", "yes")}
-                          className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
+                          className="w-4 h-4 text-brown-sugar border-gray-300 focus:ring-brown-sugar"
                         />
                         <span className="ml-3 text-gray-700">
                           I&apos;ll be there for the prayer & lunch (4:30 – 7:30
@@ -72,7 +71,7 @@ const Step3PrayerRSVP: React.FC<Step3PrayerRSVPProps> = ({
                             rsvp?.rsvpParty === "yes"
                           }
                           onChange={() => onRSVPChange(guest.id, "no", "yes")}
-                          className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
+                          className="w-4 h-4 text-brown-sugar border-gray-300 focus:ring-brown-sugar"
                         />
                         <span className="ml-3 text-gray-700">
                           I&apos;ll join later for the party (from 7:30 PM)
@@ -132,54 +131,56 @@ const Step3PrayerRSVP: React.FC<Step3PrayerRSVPProps> = ({
               </div>
 
               {/* Meal Selection - Only show if attending (either prayer or party) */}
-              {(rsvp?.rsvpPrayer === "yes" || rsvp?.rsvpParty === "yes") && (
+              {rsvp?.rsvpPrayer === "yes" && (
                 <div className="mt-6 p-4 bg-primary-100 rounded-lg">
                   <h5 className="font-medium text-gray-900 mb-3">
-                    Meal Selection
+                    Lunch Main Course Selection
                   </h5>
                   <p className="text-sm text-gray-600 mb-4">
-                    Please select your meal preference:
+                    Please choose one of the following entrées:
                   </p>
 
-                  <div className="space-y-3 mb-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name={`meal_${guest.id}`}
-                        value="chicken"
-                        checked={rsvp?.meal === "chicken"}
-                        onChange={() => onMealChange(guest.id, "chicken")}
-                        className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
-                      />
-                      <span className="ml-2 text-gray-700">🍗 Chicken</span>
-                    </label>
-                    <label className="flex items-center">
+                  <div className="space-y-4 mb-4">
+                    <label className="flex items-start cursor-pointer">
                       <input
                         type="radio"
                         name={`meal_${guest.id}`}
                         value="veal"
                         checked={rsvp?.meal === "veal"}
                         onChange={() => onMealChange(guest.id, "veal")}
-                        className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
+                        className="mt-1 w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
                       />
-                      <span className="ml-2 text-gray-700">🥩 veal</span>
+                      <span className="ml-3">
+                        <span className="block font-medium text-gray-900">
+                          Veal Milanese
+                        </span>
+                        <span className="block text-sm text-gray-600">
+                          Crispy breaded veal cutlet served with parmesan
+                          cheese, arugula, cherry tomatoes, and roasted
+                          potatoes.
+                        </span>
+                      </span>
                     </label>
-                  </div>
 
-                  {/* Dietary Notes */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Dietary Restrictions or Notes (Optional)
+                    <label className="flex items-start cursor-pointer">
+                      <input
+                        type="radio"
+                        name={`meal_${guest.id}`}
+                        value="chicken"
+                        checked={rsvp?.meal === "chicken"}
+                        onChange={() => onMealChange(guest.id, "chicken")}
+                        className="mt-1 w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
+                      />
+                      <span className="ml-3">
+                        <span className="block font-medium text-gray-900">
+                          Chicken Parmesan
+                        </span>
+                        <span className="block text-sm text-gray-600">
+                          Breaded chicken breast topped with marinara sauce and
+                          melted mozzarella.
+                        </span>
+                      </span>
                     </label>
-                    <textarea
-                      value={rsvp?.dietaryNotes || ""}
-                      onChange={(e) =>
-                        onDietaryNotesChange(guest.id, e.target.value)
-                      }
-                      placeholder="Please let us know about any allergies or dietary restrictions..."
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-1000 focus:border-transparent resize-none"
-                    />
                   </div>
                 </div>
               )}
@@ -197,4 +198,4 @@ const Step3PrayerRSVP: React.FC<Step3PrayerRSVPProps> = ({
   );
 };
 
-export default Step3PrayerRSVP;
+export default CombinedRSVP;

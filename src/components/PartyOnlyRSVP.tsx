@@ -8,7 +8,7 @@ interface Step4PartyRSVPProps {
   onNoteChange: (guestId: string, noteParty: string) => void;
 }
 
-const Step4PartyRSVP: React.FC<Step4PartyRSVPProps> = ({
+const PartyOnlyRSVP: React.FC<Step4PartyRSVPProps> = ({
   guests,
   rsvpsByGuest,
   onRSVPChange,
@@ -46,7 +46,7 @@ const Step4PartyRSVP: React.FC<Step4PartyRSVPProps> = ({
                       value="yes"
                       checked={rsvp?.rsvpParty === "yes"}
                       onChange={() => onRSVPChange(guest.id, "yes")}
-                      className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                      className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
                     />
                     <span className="ml-2 text-gray-700">
                       ✓ Will attend party
@@ -59,7 +59,7 @@ const Step4PartyRSVP: React.FC<Step4PartyRSVPProps> = ({
                       value="no"
                       checked={rsvp?.rsvpParty === "no"}
                       onChange={() => onRSVPChange(guest.id, "no")}
-                      className="w-4 h-4 text-purple-600 border-gray-300 focus:ring-purple-500"
+                      className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
                     />
                     <span className="ml-2 text-gray-700">
                       ✗ Cannot attend party
@@ -78,7 +78,7 @@ const Step4PartyRSVP: React.FC<Step4PartyRSVPProps> = ({
                   onChange={(e) => onNoteChange(guest.id, e.target.value)}
                   placeholder="Any special notes or requests..."
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-1000 focus:border-primary-1000"
                 />
               </div>
             </div>
@@ -95,4 +95,4 @@ const Step4PartyRSVP: React.FC<Step4PartyRSVPProps> = ({
   );
 };
 
-export default Step4PartyRSVP;
+export default PartyOnlyRSVP;

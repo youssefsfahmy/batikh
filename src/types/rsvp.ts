@@ -28,7 +28,7 @@ export type GuestRSVP = {
   email?: string;
   rsvpPrayer?: YesNo;
   rsvpParty?: YesNo;
-  meal?: "chicken" | "beef";
+  meal?: "chicken" | "veal";
   dietaryNotes?: string;
   notePrayer?: string;
   noteParty?: string;

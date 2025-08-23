@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import ProgressBar from "@/components/ProgressBar";
-import Step1PartySearch from "@/components/Step1PartySearch";
-import Step3PrayerRSVP from "@/components/Step3PrayerRSVP";
-import Step4PartyRSVP from "@/components/Step5PartyRSVP";
-import Step6Confirmation from "@/components/Step6Confirmation";
+import Step1PartySearch from "@/components/PartySearch";
+import Step3PrayerRSVP from "@/components/CombinedRSVP";
+import PartyOnlyRSVP from "@/components/PartyOnlyRSVP";
+import Step6Confirmation from "@/components/Confirmation";
 import { submitRSVP } from "@/utils/firebase";
 import type { FormState, Party, GuestRSVP, YesNo } from "@/types/rsvp";
 
@@ -23,46 +23,26 @@ const RSVPForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getStepsForParty = (party?: Party): StepInfo[] => {
-    const baseSteps = [
+  const getStepsForParty = (): StepInfo[] => {
+    return [
       { id: 1, label: "Find Party", isActive: false, isCompleted: false },
+      {
+        id: 2,
+        label: "RSVP",
+        isActive: false,
+        isCompleted: false,
+      },
+      {
+        id: 3,
+        label: "Confirmation",
+        isActive: false,
+        isCompleted: false,
+      },
     ];
-
-    if (!party) return baseSteps;
-
-    let stepId = 2;
-    const dynamicSteps: StepInfo[] = [];
-
-    if (party.invitedToPrayer) {
-      dynamicSteps.push({
-        id: stepId++,
-        label: "Prayer RSVP",
-        isActive: false,
-        isCompleted: false,
-      });
-    }
-
-    if (party.invitedToParty) {
-      dynamicSteps.push({
-        id: stepId++,
-        label: "Party RSVP",
-        isActive: false,
-        isCompleted: false,
-      });
-    }
-
-    dynamicSteps.push({
-      id: stepId,
-      label: "Confirm",
-      isActive: false,
-      isCompleted: false,
-    });
-
-    return [...baseSteps, ...dynamicSteps];
   };
 
   const getCurrentSteps = (): StepInfo[] => {
-    const steps = getStepsForParty(formState.party);
+    const steps = getStepsForParty();
 
     return steps.map((step) => ({
       ...step,
@@ -78,30 +58,28 @@ const RSVPForm: React.FC = () => {
       case 1:
         return !!formState.party;
       case 2:
-        // Prayer RSVP & Meal Selection step
-        if (!formState.party?.invitedToPrayer) return true;
+        // Combined RSVP & Meal Selection step
+        if (!formState.party) return true;
 
-        // Check that all guests have made prayer RSVP decision
-        const allHavePrayerRSVP = formState.party.members.every(
-          (member) => formState.rsvpsByGuest[member.id]?.rsvpPrayer
-        );
+        // Check that all guests have made their RSVP decision (either prayer or party)
+        const allHaveRSVP = formState.party.members.every((member) => {
+          const rsvp = formState.rsvpsByGuest[member.id];
+          return (
+            rsvp?.rsvpPrayer !== undefined && rsvp?.rsvpParty !== undefined
+          );
+        });
 
-        // Check that guests attending prayer have selected meals
-        const attendingPrayer = formState.party.members.filter(
-          (member) => formState.rsvpsByGuest[member.id]?.rsvpPrayer === "yes"
-        );
-        const allAttendingHaveMeals = attendingPrayer.every(
+        // Check that guests attending (either prayer or party) have selected meals
+        const attendingGuests = formState.party.members.filter((member) => {
+          const rsvp = formState.rsvpsByGuest[member.id];
+          return rsvp?.rsvpPrayer === "yes";
+        });
+        const allAttendingHaveMeals = attendingGuests.every(
           (member) => formState.rsvpsByGuest[member.id]?.meal
         );
 
-        return allHavePrayerRSVP && allAttendingHaveMeals;
+        return allHaveRSVP && allAttendingHaveMeals;
       case 3:
-        // Party RSVP step
-        if (!formState.party?.invitedToParty) return true;
-        return formState.party.members.every(
-          (member) => formState.rsvpsByGuest[member.id]?.rsvpParty
-        );
-      case 4:
         return true; // Confirmation step is always valid to view
       default:
         return false;
@@ -142,6 +120,24 @@ const RSVPForm: React.FC = () => {
     }));
   };
 
+  const handleCombinedRSVPChange = (
+    guestId: string,
+    rsvpPrayer: YesNo,
+    rsvpParty: YesNo
+  ) => {
+    setFormState((prev) => ({
+      ...prev,
+      rsvpsByGuest: {
+        ...prev.rsvpsByGuest,
+        [guestId]: {
+          ...prev.rsvpsByGuest[guestId],
+          rsvpPrayer,
+          rsvpParty,
+        },
+      },
+    }));
+  };
+
   const handleNoteChange = (
     guestId: string,
     field: "notePrayer" | "noteParty",
@@ -159,7 +155,7 @@ const RSVPForm: React.FC = () => {
     }));
   };
 
-  const handleMealChange = (guestId: string, meal: "chicken" | "beef") => {
+  const handleMealChange = (guestId: string, meal: "chicken" | "veal") => {
     setFormState((prev) => ({
       ...prev,
       rsvpsByGuest: {
@@ -197,7 +193,6 @@ const RSVPForm: React.FC = () => {
         formState.party.label,
         formState.party.invitedToPrayer,
         formState.party.invitedToParty,
-        undefined, // No submittingGuestId needed
         formState.rsvpsByGuest
       );
 
@@ -211,18 +206,22 @@ const RSVPForm: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (isStepValid(currentStep)) {
-      const steps = getCurrentSteps();
-      console.log(steps);
-      const nextStep = steps.find((s) => s.id > currentStep);
-      console.log("Next step:", nextStep);
-      if (nextStep) {
-        setCurrentStep(nextStep.id);
-      }
+    if (canGoNext) {
+      setCurrentStep(currentStep + 1);
     }
   };
 
   const handleBack = () => {
+    if (currentStep === 2) {
+      setFormState((prev) => ({
+        ...prev,
+        rsvpsByGuest: {},
+        party: undefined,
+      }));
+      setError(null);
+      setCurrentStep(1);
+      return;
+    }
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
@@ -233,12 +232,14 @@ const RSVPForm: React.FC = () => {
   const canGoBack = currentStep > 1 && !formState.confirmationCode;
 
   const renderCurrentStep = () => {
-    const steps = getCurrentSteps();
-    console.log("Current steps:", steps);
-    console.log("Current step ID:", currentStep);
-    const prayerStep = steps.find((s) => s.label.includes("Prayer"));
-    const partyStep = steps.find((s) => s.label.includes("Party RSVP"));
-    console.log("partyStep:", partyStep);
+    if (!formState.party) {
+      return (
+        <Step1PartySearch
+          onPartySelect={handlePartySelect}
+          selectedParty={formState.party}
+        />
+      );
+    }
 
     switch (currentStep) {
       case 1:
@@ -248,26 +249,24 @@ const RSVPForm: React.FC = () => {
             selectedParty={formState.party}
           />
         );
-      default:
-        if (prayerStep && currentStep === prayerStep.id) {
-          return formState.party ? (
+      case 2:
+        if (
+          formState.party?.invitedToPrayer &&
+          formState.party?.invitedToParty
+        ) {
+          return (
             <Step3PrayerRSVP
               guests={formState.party.members}
               rsvpsByGuest={formState.rsvpsByGuest}
-              onRSVPChange={(guestId, value) =>
-                handleRSVPChange(guestId, "rsvpPrayer", value)
-              }
-              onNoteChange={(guestId, value) =>
-                handleNoteChange(guestId, "notePrayer", value)
-              }
+              onRSVPChange={handleCombinedRSVPChange}
               onMealChange={handleMealChange}
               onDietaryNotesChange={handleDietaryNotesChange}
+              invitedToPrayer={formState.party.invitedToPrayer || false}
             />
-          ) : null;
-        }
-        if (partyStep && currentStep === partyStep.id) {
-          return formState.party ? (
-            <Step4PartyRSVP
+          );
+        } else {
+          return (
+            <PartyOnlyRSVP
               guests={formState.party.members}
               rsvpsByGuest={formState.rsvpsByGuest}
               onRSVPChange={(guestId, value) =>
@@ -277,10 +276,11 @@ const RSVPForm: React.FC = () => {
                 handleNoteChange(guestId, "noteParty", value)
               }
             />
-          ) : null;
+          );
         }
-        // Confirmation step
-        return formState.party ? (
+
+      default:
+        return (
           <Step6Confirmation
             party={formState.party}
             guests={formState.party.members}
@@ -290,20 +290,20 @@ const RSVPForm: React.FC = () => {
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
           />
-        ) : null;
+        );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-light to-primary-100 py-8">
       <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8">
+        <div className="bg-white rounded-lg shadow-lg p-8 border border-neutral-300">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-secondary-dark mb-2">
               Engagement RSVP
             </h1>
-            <p className="text-gray-600">
+            <p className="text-neutral-600">
               Please complete the form below to confirm your attendance
             </p>
           </div>
@@ -313,8 +313,8 @@ const RSVPForm: React.FC = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700">{error}</p>
+            <div className="mb-6 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+              <p className="text-primary font-medium">{error}</p>
             </div>
           )}
 
@@ -327,14 +327,14 @@ const RSVPForm: React.FC = () => {
 
           {/* Navigation Buttons */}
           {!formState.confirmationCode && (
-            <div className="flex justify-between pt-6 border-t border-gray-200">
+            <div className="flex justify-between pt-6 border-t border-neutral-300">
               <button
                 onClick={handleBack}
                 disabled={!canGoBack}
                 className={`px-6 py-2 rounded-lg font-medium transition-all ${
                   canGoBack
-                    ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    : "bg-gray-50 text-gray-400 cursor-not-allowed"
+                    ? "bg-primary-100 text-primary hover:bg-neutral-200"
+                    : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
                 }`}
               >
                 ← Back
@@ -346,8 +346,8 @@ const RSVPForm: React.FC = () => {
                   disabled={!canGoNext}
                   className={`px-6 py-2 rounded-lg font-medium transition-all ${
                     canGoNext
-                      ? "bg-purple-500 text-white hover:bg-purple-600"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      ? "bg-primary text-white hover:bg-accent-hover shadow-lg"
+                      : "bg-neutral-300 text-neutral-500 cursor-not-allowed"
                   }`}
                 >
                   Next →

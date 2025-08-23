@@ -66,7 +66,6 @@
       "partyLabel": "Williams Extended Family",
       "invitedToPrayer": true,
       "invitedToParty": true,
-      "submittingGuestId": "g-005",
       "confirmationCode": "WX-4K9L",
       "createdAt": 1723200000000,
       "guests": [
@@ -98,7 +97,7 @@
           "lastName": "Williams",
           "rsvpPrayer": "no",
           "rsvpParty": "yes",
-          "meal": "beef",
+          "meal": "veal",
           "dietaryNotes": "No dairy",
           "notePrayer": "",
           "noteParty": "Will bring a friend"

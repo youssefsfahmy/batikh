@@ -8,7 +8,7 @@ A modern, multi-step RSVP form built with Next.js, React, TypeScript, and Tailwi
 - **Party Search**: Debounced search to find invitations by name
 - **Dynamic Steps**: Steps adjust based on invitation type (Prayer/Party)
 - **State Management**: All form state managed in parent component
-- **Meal Selection**: Choice between chicken and beef with dietary notes
+- **Meal Selection**: Choice between chicken and veal with dietary notes
 - **Confirmation**: Success page with confirmation code
 - **Responsive Design**: Beautiful UI that works on all devices
 
@@ -55,7 +55,6 @@ parties/{partyId}
   │
   └── RSVP Data (added after submission):
       ├── partyLabel: "The Smith Family"
-      ├── submittingGuestId: "guest1"
       ├── confirmationCode: "ABC123"
       ├── createdAt: 1640995200000
       └── guests: [
@@ -138,7 +137,7 @@ The meal options are now integrated into the Prayer RSVP step. To modify them, e
 ```typescript
 // In Step3PrayerRSVP.tsx
 <input value="chicken" />  // Change meal options here
-<input value="beef" />
+<input value="veal" />
 ```
 
 ## Form Flow
@@ -168,7 +167,6 @@ The system uses a simplified data model where:
    - Initially stores party details (label, members, invite flags)
    - After RSVP submission, additional fields are added:
      - `confirmationCode`: Unique RSVP confirmation
-     - `submittingGuestId`: Who submitted the RSVP
      - `guests`: Array of RSVP responses for each guest
      - `createdAt`: Submission timestamp
 

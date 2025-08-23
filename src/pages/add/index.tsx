@@ -267,7 +267,7 @@ const PartyCreator: React.FC = () => {
                 value={formState.partyId}
                 onChange={(e) => updateFormState({ partyId: e.target.value })}
                 placeholder="e.g., pty-001"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-1000 focus:border-primary-1000"
                 required
               />
             </div>
@@ -283,7 +283,7 @@ const PartyCreator: React.FC = () => {
                   onChange={(e) =>
                     updateFormState({ labelTemplate: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-1000 focus:border-primary-1000"
                   required
                 >
                   {LABEL_TEMPLATES.map((template) => (
@@ -300,7 +300,7 @@ const PartyCreator: React.FC = () => {
                       updateFormState({ customSuffix: e.target.value })
                     }
                     placeholder="Custom suffix"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-1000 focus:border-primary-1000"
                   />
                 </div>
                 <div className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
@@ -322,7 +322,7 @@ const PartyCreator: React.FC = () => {
                     onChange={(e) =>
                       updateFormState({ invitedToPrayer: e.target.checked })
                     }
-                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-1000"
                   />
                   <span className="ml-2 text-gray-700">
                     Invited to Prayer Ceremony
@@ -335,7 +335,7 @@ const PartyCreator: React.FC = () => {
                     onChange={(e) =>
                       updateFormState({ invitedToParty: e.target.checked })
                     }
-                    className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                    className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-1000"
                   />
                   <span className="ml-2 text-gray-700">Invited to Party</span>
                 </label>
@@ -351,7 +351,7 @@ const PartyCreator: React.FC = () => {
                 <button
                   type="button"
                   onClick={addMember}
-                  className="px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200"
+                  className="px-3 py-1 text-sm bg-primary-100 text-primary rounded hover:bg-primary-200"
                 >
                   + Add Member
                 </button>
@@ -378,7 +378,7 @@ const PartyCreator: React.FC = () => {
                           updateMember(index, "firstName", e.target.value)
                         }
                         placeholder="First name"
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-primary-1000 focus:border-primary-1000"
                         required
                       />
                     </div>
@@ -390,7 +390,7 @@ const PartyCreator: React.FC = () => {
                           updateMember(index, "lastName", e.target.value)
                         }
                         placeholder="Last name"
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-primary-1000 focus:border-primary-1000"
                         required
                       />
                     </div>
@@ -402,7 +402,7 @@ const PartyCreator: React.FC = () => {
                           updateMember(index, "email", e.target.value)
                         }
                         placeholder="Email"
-                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:ring-primary-1000 focus:border-primary-1000"
                       />
                     </div>
                     <div className="col-span-1">
@@ -437,7 +437,7 @@ const PartyCreator: React.FC = () => {
                 type="button"
                 onClick={saveParty}
                 disabled={isSubmitting}
-                className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               >
                 {isSubmitting ? (
                   <>

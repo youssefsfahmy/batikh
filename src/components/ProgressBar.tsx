@@ -23,20 +23,20 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ steps }) => {
   return (
     <div className="w-full mb-8">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">
+        <h2 className="text-xl font-semibold text-secondary-dark">
           {currentStep?.label || "Complete"}
         </h2>
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-neutral-500">
           Step {currentStepIndex + 1} of {totalSteps}
         </span>
       </div>
 
       <div className="relative">
         {/* Progress bar background */}
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-primary-100 rounded-full h-2">
           {/* Progress bar fill */}
           <div
-            className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
+            className="bg-gradient-to-r from-primary-600 to-primary-300 h-2 rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
@@ -48,10 +48,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ steps }) => {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                   step.isCompleted
-                    ? "bg-green-500 text-white"
+                    ? "bg-primary text-white"
                     : step.isActive
-                    ? "bg-purple-500 text-white"
-                    : "bg-gray-300 text-gray-600"
+                    ? "bg-primary text-white"
+                    : "bg-primary-100 text-neutral-500"
                 }`}
               >
                 {step.isCompleted ? (
@@ -70,7 +70,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ steps }) => {
                   step.id
                 )}
               </div>
-              <span className="text-xs text-gray-600 mt-2 text-center max-w-20">
+              <span className="text-xs text-neutral-600 mt-2 text-center max-w-20">
                 {step.label}
               </span>
             </div>

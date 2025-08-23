@@ -69,11 +69,11 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Enter your name..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-1000 focus:border-transparent"
         />
         {isLoading && (
           <div className="absolute right-3 top-3">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-1000"></div>
           </div>
         )}
       </div>
@@ -93,8 +93,8 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
                   onClick={() => handlePartySelect(party)}
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
                     selectedParty?.id === party.id
-                      ? "border-purple-500 bg-purple-50"
-                      : "border-gray-200 hover:border-purple-300 hover:bg-gray-50"
+                      ? "border-primary bg-primary-100"
+                      : "border-gray-200 hover:border-primary-light hover:bg-gray-50"
                   }`}
                 >
                   <div className="flex justify-between items-start">
@@ -125,7 +125,7 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
                       </div> */}
                     </div>
                     {selectedParty?.id === party.id && (
-                      <div className="text-purple-500">
+                      <div className="text-primary">
                         <svg
                           className="w-6 h-6"
                           fill="currentColor"

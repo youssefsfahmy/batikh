@@ -10,9 +10,9 @@ interface PartyWithSubmission extends Party {
 
 const ViewPage: React.FC = () => {
   const [parties, setParties] = useState<PartyWithSubmission[]>([]);
-  const [activeTab, setActiveTab] = useState<"parties" | "submissions">(
-    "parties"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "parties" | "submissions" | "totals"
+  >("parties");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,7 +36,6 @@ const ViewPage: React.FC = () => {
 
             // RSVP submission data
             partyLabel: data.partyLabel,
-            submittingGuestId: data.submittingGuestId,
             confirmationCode: data.confirmationCode,
             createdAt: data.createdAt,
             guests: data.guests || [],
@@ -82,7 +81,6 @@ const ViewPage: React.FC = () => {
             invitedToParty: false,
             // RSVP submission data
             partyLabel: data.partyLabel,
-            submittingGuestId: data.submittingGuestId,
             confirmationCode: data.confirmationCode,
             createdAt: data.createdAt,
             guests: data.guests || [],
@@ -109,7 +107,7 @@ const ViewPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (activeTab === "parties") {
+    if (activeTab === "parties" || activeTab === "totals") {
       fetchParties();
     } else {
       fetchSubmissions();
@@ -147,6 +145,47 @@ const ViewPage: React.FC = () => {
     };
   };
 
+  const getOverallTotals = () => {
+    const submittedParties = parties.filter((p) => p.hasSubmission);
+    const allGuests = submittedParties.flatMap((p) => p.guests || []);
+
+    const totalPrayerAttending = allGuests.filter(
+      (g) => g.rsvpPrayer === "yes"
+    ).length;
+    const totalPartyAttending = allGuests.filter(
+      (g) => g.rsvpParty === "yes"
+    ).length;
+    const totalNotAttending = allGuests.filter(
+      (g) => g.rsvpPrayer === "no" && g.rsvpParty === "no"
+    ).length;
+
+    const mealCounts = allGuests.reduce((acc, guest) => {
+      if (guest.meal) {
+        acc[guest.meal] = (acc[guest.meal] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    const dietaryRestrictions = allGuests.filter(
+      (g) => g.dietaryNotes && g.dietaryNotes.trim() !== ""
+    ).length;
+
+    return {
+      totalParties: parties.length,
+      submittedParties: submittedParties.length,
+      totalGuests: allGuests.length,
+      prayerAttending: totalPrayerAttending,
+      partyAttending: totalPartyAttending,
+      notAttending: totalNotAttending,
+      mealCounts,
+      dietaryRestrictions,
+      responseRate:
+        parties.length > 0
+          ? ((submittedParties.length / parties.length) * 100).toFixed(1)
+          : "0",
+    };
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto max-w-6xl px-4">
@@ -169,7 +208,7 @@ const ViewPage: React.FC = () => {
                   onClick={() => setActiveTab("parties")}
                   className={`py-2 px-4 border-b-2 font-medium text-sm ${
                     activeTab === "parties"
-                      ? "border-purple-500 text-purple-600"
+                      ? "border-primary-1000 text-primary-600"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -179,11 +218,21 @@ const ViewPage: React.FC = () => {
                   onClick={() => setActiveTab("submissions")}
                   className={`py-2 px-4 border-b-2 font-medium text-sm ${
                     activeTab === "submissions"
-                      ? "border-purple-500 text-purple-600"
+                      ? "border-primary-1000 text-primary-600"
                       : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                   }`}
                 >
                   Submitted ({parties.filter((p) => p.hasSubmission).length})
+                </button>
+                <button
+                  onClick={() => setActiveTab("totals")}
+                  className={`py-2 px-4 border-b-2 font-medium text-sm ${
+                    activeTab === "totals"
+                      ? "border-primary-1000 text-primary-600"
+                      : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
+                >
+                  Totals & Stats
                 </button>
               </nav>
             </div>
@@ -199,7 +248,7 @@ const ViewPage: React.FC = () => {
           {/* Loading State */}
           {isLoading && (
             <div className="flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-1000"></div>
               <span className="ml-3 text-gray-600">Loading...</span>
             </div>
           )}
@@ -450,6 +499,195 @@ const ViewPage: React.FC = () => {
                   })}
                 </>
               )}
+            </div>
+          )}
+
+          {/* Totals Tab */}
+          {activeTab === "totals" && !isLoading && (
+            <div className="space-y-6">
+              {(() => {
+                const totals = getOverallTotals();
+
+                return (
+                  <>
+                    {/* Overview Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="bg-primary-light border border-primary-200 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-primary-dark">
+                          {totals.totalParties}
+                        </div>
+                        <div className="text-sm text-primary-600">
+                          Total Parties
+                        </div>
+                      </div>
+
+                      <div className="bg-secondary-light border border-secondary-200 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-secondary-dark">
+                          {totals.submittedParties}
+                        </div>
+                        <div className="text-sm text-secondary-600">
+                          Submitted RSVPs
+                        </div>
+                      </div>
+
+                      <div className="bg-accent-light border border-accent-200 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-accent-dark">
+                          {totals.totalGuests}
+                        </div>
+                        <div className="text-sm text-accent-600">
+                          Total Guests
+                        </div>
+                      </div>
+
+                      <div className="bg-neutral-light border border-neutral-300 rounded-lg p-4">
+                        <div className="text-2xl font-bold text-neutral-dark">
+                          {totals.responseRate}%
+                        </div>
+                        <div className="text-sm text-neutral-600">
+                          Response Rate
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Attendance Statistics */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-neutral-dark mb-4">
+                          Event Attendance
+                        </h3>
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-neutral-600">
+                              Prayer Ceremony
+                            </span>
+                            <span className="font-semibold text-primary-600">
+                              {totals.prayerAttending} guests
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-neutral-600">
+                              Reception Party
+                            </span>
+                            <span className="font-semibold text-secondary-600">
+                              {totals.partyAttending} guests
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-neutral-600">
+                              Not Attending
+                            </span>
+                            <span className="font-semibold text-neutral-500">
+                              {totals.notAttending} guests
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Meal Counts */}
+                      <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-6">
+                        <h3 className="text-lg font-semibold text-neutral-dark mb-4">
+                          Meal Preferences
+                        </h3>
+                        <div className="space-y-3">
+                          {Object.keys(totals.mealCounts).length > 0 ? (
+                            Object.entries(totals.mealCounts).map(
+                              ([meal, count]) => (
+                                <div
+                                  key={meal}
+                                  className="flex justify-between items-center"
+                                >
+                                  <span className="text-neutral-600 capitalize">
+                                    {meal}
+                                  </span>
+                                  <span className="font-semibold text-accent-600">
+                                    {count} guests
+                                  </span>
+                                </div>
+                              )
+                            )
+                          ) : (
+                            <p className="text-neutral-500 text-sm">
+                              No meal preferences recorded
+                            </p>
+                          )}
+                          {totals.dietaryRestrictions > 0 && (
+                            <div className="pt-3 border-t border-neutral-200">
+                              <div className="flex justify-between items-center">
+                                <span className="text-neutral-600">
+                                  Special Dietary Needs
+                                </span>
+                                <span className="font-semibold text-primary-600">
+                                  {totals.dietaryRestrictions} guests
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Detailed Breakdown */}
+                    <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-6">
+                      <h3 className="text-lg font-semibold text-neutral-dark mb-4">
+                        Summary Breakdown
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="font-medium text-neutral-700 mb-3">
+                            RSVP Status
+                          </h4>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span>Parties invited:</span>
+                              <span className="font-medium">
+                                {totals.totalParties}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Responses received:</span>
+                              <span className="font-medium text-secondary-600">
+                                {totals.submittedParties}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Pending responses:</span>
+                              <span className="font-medium text-neutral-500">
+                                {totals.totalParties - totals.submittedParties}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <h4 className="font-medium text-neutral-700 mb-3">
+                            Guest Totals
+                          </h4>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span>Total guest responses:</span>
+                              <span className="font-medium">
+                                {totals.totalGuests}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Attending prayer:</span>
+                              <span className="font-medium text-primary-600">
+                                {totals.prayerAttending}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Attending party:</span>
+                              <span className="font-medium text-secondary-600">
+                                {totals.partyAttending}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>
