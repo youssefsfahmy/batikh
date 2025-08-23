@@ -94,7 +94,7 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
                   className={`p-4 border rounded-lg cursor-pointer transition-all ${
                     selectedParty?.id === party.id
                       ? "border-primary bg-primary-100"
-                      : "border-gray-200 hover:border-primary-light hover:bg-gray-50"
+                      : "border-gray-200 hover:border-primary-50 hover:bg-gray-50"
                   }`}
                 >
                   <div className="flex justify-between items-start">

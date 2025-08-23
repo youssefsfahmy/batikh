@@ -295,7 +295,7 @@ const RSVPForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-light to-primary-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-8">
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-lg p-8 border border-neutral-300">
           {/* Header */}
