@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow reading and updating parties for RSVP functionality
+    match /parties/{partyId} {
+      allow read: if true;
+      allow write: if true; // Allow RSVP submissions
+    }
+    
+    // More restrictive rules for production:
+    // - Add authentication requirements
+    // - Validate data structure
+    // - Limit read access to specific fields
+    // - Add rate limiting
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "parties": {
+    "pty-001": {
+      "label": "Bride's family – Ahmed",
+      "members": [
+        {
+          "id": "g-001",
+          "firstName": "Ahmed",
+          "lastName": "Khaled",
+          "email": "ahmed@example.com"
+        },
+        {
+          "id": "g-002",
+          "firstName": "Mona",
+          "lastName": "Saad"
+        }
+      ],
+      "invite": {
+        "invitedToPrayer": true,
+        "invitedToParty": true
+      }
+    },
+    "pty-002": {
+      "label": "Johnson Party",
+      "members": [
+        {
+          "id": "g-003",
+          "firstName": "Michael",
+          "lastName": "Johnson"
+        },
+        {
+          "id": "g-004",
+          "firstName": "Sarah",
+          "lastName": "Johnson"
+        }
+      ],
+      "invite": {
+        "invitedToPrayer": false,
+        "invitedToParty": true
+      }
+    },
+    "pty-003": {
+      "label": "Williams Extended Family",
+      "members": [
+        {
+          "id": "g-005",
+          "firstName": "Robert",
+          "lastName": "Williams"
+        },
+        {
+          "id": "g-006",
+          "firstName": "Mary",
+          "lastName": "Williams"
+        },
+        {
+          "id": "g-007",
+          "firstName": "David",
+          "lastName": "Williams"
+        }
+      ],
+      "invite": {
+        "invitedToPrayer": true,
+        "invitedToParty": true
+      },
+      "partyId": "pty-003",
+      "partyLabel": "Williams Extended Family",
+      "invitedToPrayer": true,
+      "invitedToParty": true,
+      "submittingGuestId": "g-005",
+      "confirmationCode": "WX-4K9L",
+      "createdAt": 1723200000000,
+      "guests": [
+        {
+          "guestId": "g-005",
+          "firstName": "Robert",
+          "lastName": "Williams",
+          "rsvpPrayer": "yes",
+          "rsvpParty": "yes",
+          "meal": "chicken",
+          "dietaryNotes": "",
+          "notePrayer": "",
+          "noteParty": ""
+        },
+        {
+          "guestId": "g-006",
+          "firstName": "Mary",
+          "lastName": "Williams",
+          "rsvpPrayer": "yes",
+          "rsvpParty": "no",
+          "meal": "",
+          "dietaryNotes": "",
+          "notePrayer": "Looking forward to it",
+          "noteParty": ""
+        },
+        {
+          "guestId": "g-007",
+          "firstName": "David",
+          "lastName": "Williams",
+          "rsvpPrayer": "no",
+          "rsvpParty": "yes",
+          "meal": "beef",
+          "dietaryNotes": "No dairy",
+          "notePrayer": "",
+          "noteParty": "Will bring a friend"
+        }
+      ]
+    }
+  }
+}
