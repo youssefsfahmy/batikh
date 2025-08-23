@@ -12,7 +12,6 @@ const PartyOnlyRSVP: React.FC<Step4PartyRSVPProps> = ({
   guests,
   rsvpsByGuest,
   onRSVPChange,
-  onNoteChange,
 }) => {
   return (
     <div className="space-y-6">
@@ -38,8 +37,8 @@ const PartyOnlyRSVP: React.FC<Step4PartyRSVPProps> = ({
 
               {/* RSVP Options */}
               <div className="mb-4">
-                <div className="flex space-x-4">
-                  <label className="flex items-center">
+                <div className="space-y-3">
+                  <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
                     <input
                       type="radio"
                       name={`party_${guest.id}`}
@@ -48,11 +47,12 @@ const PartyOnlyRSVP: React.FC<Step4PartyRSVPProps> = ({
                       onChange={() => onRSVPChange(guest.id, "yes")}
                       className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
                     />
-                    <span className="ml-2 text-gray-700">
-                      ✓ Will attend party
+                    <span className="ml-3 text-gray-700">
+                      I&apos;ll be there
                     </span>
                   </label>
-                  <label className="flex items-center">
+
+                  <label className="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50">
                     <input
                       type="radio"
                       name={`party_${guest.id}`}
@@ -61,25 +61,11 @@ const PartyOnlyRSVP: React.FC<Step4PartyRSVPProps> = ({
                       onChange={() => onRSVPChange(guest.id, "no")}
                       className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
                     />
-                    <span className="ml-2 text-gray-700">
-                      ✗ Cannot attend party
+                    <span className="ml-3 text-gray-700">
+                      I won&apos;t be able to attend
                     </span>
                   </label>
                 </div>
-              </div>
-
-              {/* Optional Note */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Optional note about party attendance:
-                </label>
-                <textarea
-                  value={rsvp?.noteParty || ""}
-                  onChange={(e) => onNoteChange(guest.id, e.target.value)}
-                  placeholder="Any special notes or requests..."
-                  rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary-1000 focus:border-primary-1000"
-                />
               </div>
             </div>
           );

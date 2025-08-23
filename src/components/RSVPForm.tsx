@@ -61,9 +61,19 @@ const RSVPForm: React.FC = () => {
         // Combined RSVP & Meal Selection step
         if (!formState.party) return true;
 
-        // Check that all guests have made their RSVP decision (either prayer or party)
+        // Check that all guests have made their RSVP decision
         const allHaveRSVP = formState.party.members.every((member) => {
           const rsvp = formState.rsvpsByGuest[member.id];
+
+          // For party-only invitations, only check party RSVP
+          if (
+            !formState.party?.invitedToPrayer &&
+            formState.party?.invitedToParty
+          ) {
+            return rsvp?.rsvpParty !== undefined;
+          }
+
+          // For combined invitations, check both prayer and party RSVP
           return (
             rsvp?.rsvpPrayer !== undefined && rsvp?.rsvpParty !== undefined
           );
