@@ -4,13 +4,21 @@ import Link from "next/link";
 // import Link from "next/link";
 
 export default function Home() {
+  const isPartyEvent = process.env.NEXT_PUBLIC_IS_PARTY_EVENT === "true";
+
+  console.log("isPartyEvent:", isPartyEvent);
+
   return (
     <div className="flex flex-col justify-center items-center  w-full bg-[#636d557d]  ">
       <Head />
 
       <div className="w-full bg-[#f6efe4] flex items-center justify-center snap-start relative max-w-screen-sm ">
         <Image
-          src="/Batikh's Engagament-1.png"
+          src={
+            isPartyEvent
+              ? "/Batikh's Engagament-party.png"
+              : "/Batikh's Engagament-prayer.png"
+          }
           alt="Next.js logo"
           layout="responsive"
           width={3000} // Original image width
