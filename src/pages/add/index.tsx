@@ -45,7 +45,7 @@ const buildSearchIndex = (label: string, members: Member[]): string[] => {
   const tokens = new Set<string>();
 
   // Add label tokens
-  tokenize(label).forEach((token) => tokens.add(token));
+  // tokenize(label).forEach((token) => tokens.add(token));
 
   // Add member name tokens
   members.forEach((member) => {

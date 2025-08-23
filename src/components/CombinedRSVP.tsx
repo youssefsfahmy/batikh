@@ -57,7 +57,7 @@ const CombinedRSVP: React.FC<Step3PrayerRSVPProps> = ({
                         />
                         <span className="ml-3 text-gray-700">
                           I&apos;ll be there for the prayer & lunch (4:30 – 7:30
-                          PM)
+                          PM) and will stay on for the Party
                         </span>
                       </label>
 
