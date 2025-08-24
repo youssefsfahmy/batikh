@@ -5,7 +5,10 @@ import type { Party, GuestRSVP } from "@/types/rsvp";
 /**
  * Search for parties by name tokens
  */
-export async function searchParties(searchTerm: string): Promise<Party[]> {
+export async function searchParties(
+  searchTerm: string,
+  isPartyOnlyEventWebsite: boolean
+): Promise<Party[]> {
   if (!searchTerm.trim()) return [];
 
   const searchLower = searchTerm.toLowerCase().trim();
@@ -30,6 +33,14 @@ export async function searchParties(searchTerm: string): Promise<Party[]> {
       guests: data.guests,
     };
 
+    if (
+      (isPartyOnlyEventWebsite && party.invitedToPrayer) ||
+      (!isPartyOnlyEventWebsite &&
+        !party.invitedToPrayer &&
+        party.invitedToParty)
+    ) {
+      return; // Skip parties not invited to the party event
+    }
     // Check if any member matches the search
     const hasMatch = party.members.some((member) => {
       const fullName = `${member.firstName} ${member.lastName}`.toLowerCase();
