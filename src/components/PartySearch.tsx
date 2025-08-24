@@ -16,7 +16,9 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     if (!searchTerm.trim()) {
       setSearchResults([]);
       setHasSearched(false);
@@ -35,12 +37,15 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
       setSearchResults([]);
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        window.scrollTo({ top: 350, behavior: "smooth" });
+      }, 200);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSearch();
+      handleSearch(e);
     }
   };
 
