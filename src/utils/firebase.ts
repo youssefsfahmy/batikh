@@ -135,7 +135,8 @@ export async function submitRSVP(
   partyLabel: string | undefined,
   invitedToPrayer: boolean,
   invitedToParty: boolean,
-  rsvpsByGuest: Record<string, GuestRSVP>
+  rsvpsByGuest: Record<string, GuestRSVP>,
+  message: string = ""
 ): Promise<string> {
   const confirmationCode = generateConfirmationCode();
   const createdAt = Date.now();
@@ -151,6 +152,7 @@ export async function submitRSVP(
     guests: Object.values(rsvpsByGuest),
     confirmationCode,
     createdAt,
+    message,
   };
 
   console.log("Submitting RSVP data:", rsvpData);

@@ -19,6 +19,7 @@ export type Party = {
   confirmationCode?: string;
   createdAt?: number;
   guests?: GuestRSVP[]; // RSVP responses for each guest
+  message?: string; // Optional message from the party
 };
 
 export type GuestRSVP = {

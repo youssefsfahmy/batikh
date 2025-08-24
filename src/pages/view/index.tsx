@@ -736,6 +736,9 @@ const ViewPage: React.FC = () => {
                                 {summary.partyAttending} attending party
                               </div>
                             )}
+                            <div className="text-gray-600">
+                              Message: {party.message}
+                            </div>
                           </div>
                         </div>
 

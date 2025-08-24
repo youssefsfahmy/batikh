@@ -10,6 +10,7 @@ interface Step6ConfirmationProps {
   isSubmitted: boolean;
   onSubmit: () => void;
   isSubmitting: boolean;
+  handleMessageChange: (message: string) => void;
 }
 
 const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
@@ -20,6 +21,7 @@ const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
   // isSubmitted,
   onSubmit,
   isSubmitting,
+  handleMessageChange,
 }) => {
   const router = useRouter();
 
@@ -218,6 +220,7 @@ const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
           placeholder="Write your message here... (Optional)"
           rows={4}
           className="w-full px-3 py-2 border border-timberwolf rounded-lg focus:ring-2 focus:ring-brown-sugar focus:border-transparent resize-none placeholder-ash-gray"
+          onChange={(e) => handleMessageChange(e.target.value)}
         />
         <p className="text-xs text-reseda-green mt-2">
           ✨ Your message will be shared with Youssef and Sandra

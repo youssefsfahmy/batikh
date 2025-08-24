@@ -168,6 +168,13 @@ const RSVPForm: React.FC = () => {
     }));
   };
 
+  const handleMessageChange = (message: string) => {
+    setFormState((prev) => ({
+      ...prev,
+      party: prev.party ? { ...prev.party, message } : prev.party,
+    }));
+  };
+
   const handleCombinedRSVPChange = (
     guestId: string,
     rsvpPrayer: YesNo,
@@ -241,7 +248,8 @@ const RSVPForm: React.FC = () => {
         formState.party.label,
         formState.party.invitedToPrayer,
         formState.party.invitedToParty,
-        formState.rsvpsByGuest
+        formState.rsvpsByGuest,
+        formState.party.message || ""
       );
 
       setFormState((prev) => ({ ...prev, confirmationCode }));
@@ -376,6 +384,7 @@ const RSVPForm: React.FC = () => {
             isSubmitted={!!formState.confirmationCode}
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
+            handleMessageChange={handleMessageChange}
           />
         );
     }
