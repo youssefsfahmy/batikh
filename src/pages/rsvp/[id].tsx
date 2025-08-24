@@ -243,9 +243,11 @@ const SubmissionViewPage: React.FC = () => {
 
                     {/* Meal & Dietary */}
                     <div>
-                      <h4 className="font-medium text-neutral-700 mb-2">
-                        Meal Preferences
-                      </h4>
+                      {guest.meal && (
+                        <h4 className="font-medium text-neutral-700 mb-2">
+                          Meal Preferences
+                        </h4>
+                      )}
                       <div className="space-y-1 text-sm">
                         {guest.meal && (
                           <div className="flex justify-between">
