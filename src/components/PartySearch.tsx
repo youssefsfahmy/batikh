@@ -74,7 +74,13 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
           }}
           type="text"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            if (hasSearched) {
+              setHasSearched(false);
+              setSearchResults([]);
+            }
+          }}
           onKeyPress={handleKeyPress}
           onFocus={handleInputFocus}
           placeholder="Enter your name..."

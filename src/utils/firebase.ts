@@ -33,7 +33,6 @@ export async function searchParties(searchTerm: string): Promise<Party[]> {
     };
 
     // Create searchable text components
-    const partyLabel = (party.label || "").toLowerCase();
     const memberNames = party.members.map((m) =>
       `${m.firstName} ${m.lastName}`.toLowerCase()
     );
@@ -43,16 +42,7 @@ export async function searchParties(searchTerm: string): Promise<Party[]> {
     let score = 0;
     let hasMatch = false;
 
-    // Check for exact phrase match first (highest priority)
-    if (partyLabel.includes(originalSearchTerm)) {
-      hasMatch = true;
-      if (partyLabel === originalSearchTerm) {
-        score += 200; // Exact party label phrase match
-      } else {
-        score += 150; // Party label contains exact phrase
-      }
-    }
-
+    // Check for exact phrase match in member names only
     memberNames.forEach((name) => {
       if (name.includes(originalSearchTerm)) {
         hasMatch = true;
@@ -65,24 +55,9 @@ export async function searchParties(searchTerm: string): Promise<Party[]> {
     });
 
     // Track which tokens have been matched to avoid duplicate scoring
-    const matchedTokensInPartyLabel = new Set<string>();
     const matchedTokensInMemberNames = new Set<string>();
 
     tokens.forEach((token) => {
-      // Party label token matches (only score once per token)
-      if (partyLabel.includes(token) && !matchedTokensInPartyLabel.has(token)) {
-        hasMatch = true;
-        matchedTokensInPartyLabel.add(token);
-
-        if (partyLabel === token) {
-          score += 100; // Exact party label match
-        } else if (partyLabel.startsWith(token)) {
-          score += 50; // Party label starts with token
-        } else {
-          score += 25; // Party label contains token
-        }
-      }
-
       // Member name token matches (only score once per token across all names)
       memberNames.forEach((name) => {
         if (name.includes(token) && !matchedTokensInMemberNames.has(token)) {
@@ -107,12 +82,8 @@ export async function searchParties(searchTerm: string): Promise<Party[]> {
     });
 
     // Bonus for matching multiple tokens (only count unique matches)
-    const uniqueMatchedTokens = new Set([
-      ...matchedTokensInPartyLabel,
-      ...matchedTokensInMemberNames,
-    ]);
-    if (uniqueMatchedTokens.size > 1) {
-      score += uniqueMatchedTokens.size * 10;
+    if (matchedTokensInMemberNames.size > 1) {
+      score += matchedTokensInMemberNames.size * 10;
     }
 
     if (hasMatch) {
