@@ -50,7 +50,7 @@ const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
           </p>
         </div>
 
-        <div className="bg-primary/10 border border-primary/30 rounded-lg p-6">
+        {/* <div className="bg-primary/10 border border-primary/30 rounded-lg p-6">
           <h4 className="font-medium text-primary mb-2">Confirmation Code</h4>
           <div className="text-2xl font-mono font-bold text-primary tracking-wider">
             {confirmationCode}
@@ -58,7 +58,7 @@ const Step6Confirmation: React.FC<Step6ConfirmationProps> = ({
           <p className="text-sm text-primary mt-2">
             Please save this confirmation code for your records.
           </p>
-        </div>
+        </div> */}
 
         <div className="text-sm text-neutral-600">
           <p>

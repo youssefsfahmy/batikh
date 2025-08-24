@@ -42,15 +42,15 @@ const SubmissionViewPage: React.FC = () => {
     fetchSubmission();
   }, [confirmationCode]);
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  //   const formatDate = (timestamp: number) => {
+  //     return new Date(timestamp).toLocaleDateString("en-US", {
+  //       year: "numeric",
+  //       month: "long",
+  //       day: "numeric",
+  //       hour: "2-digit",
+  //       minute: "2-digit",
+  //     });
+  //   };
 
   const getRSVPSummary = (guests: GuestRSVP[]) => {
     const prayerYes = guests.filter((g) => g.rsvpPrayer === "yes").length;
@@ -127,7 +127,7 @@ const SubmissionViewPage: React.FC = () => {
               We&apos;re excited to celebrate with you, Youssef & Sandra&apos;s
               special day!
             </p>
-            <div className="bg-primary-light border border-primary-200 rounded-lg p-4 inline-block">
+            {/* <div className="bg-primary-light border border-primary-200 rounded-lg p-4 inline-block">
               <p className="text-sm text-primary-600 font-medium">
                 Confirmation Code:{" "}
                 <span className="font-bold text-primary-dark">
@@ -137,7 +137,7 @@ const SubmissionViewPage: React.FC = () => {
               <p className="text-xs text-primary-500 mt-1">
                 Submitted on {formatDate(party.createdAt || 0)}
               </p>
-            </div>
+            </div> */}
           </div>
 
           {/* RSVP Summary */}
