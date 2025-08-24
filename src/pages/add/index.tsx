@@ -128,7 +128,7 @@ const PartyCreator: React.FC = () => {
       partyId: `pty-${Math.random().toString(36).substring(2, 8)}`,
       labelTemplate: LABEL_TEMPLATES[0],
       invitedToPrayer: false,
-      invitedToParty: false,
+      invitedToParty: true,
       members: [{ firstName: "", lastName: "", email: "" }],
     });
     setMessage(null);
