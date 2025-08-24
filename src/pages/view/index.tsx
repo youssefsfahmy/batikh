@@ -80,9 +80,11 @@ const ViewPage: React.FC = () => {
             submissionDate: data.createdAt
               ? new Date(data.createdAt).toLocaleString()
               : undefined,
+            message: data.message || "",
           };
         }
       );
+      console.log("Fetched parties:", partiesData);
 
       setParties(partiesData);
     } catch (err) {
@@ -125,6 +127,7 @@ const ViewPage: React.FC = () => {
             submissionDate: data.createdAt
               ? new Date(data.createdAt).toLocaleString()
               : undefined,
+            message: data.message || "",
           };
         })
         .filter((party) => party.hasSubmission)
@@ -736,9 +739,6 @@ const ViewPage: React.FC = () => {
                                 {summary.partyAttending} attending party
                               </div>
                             )}
-                            <div className="text-gray-600">
-                              Message: {party.message}
-                            </div>
                           </div>
                         </div>
 
@@ -855,6 +855,14 @@ const ViewPage: React.FC = () => {
                             </div>
                           </div>
                         )}
+                        <div className="mt-4">
+                          <h4 className="font-medium text-gray-700 mb-2">
+                            Message:
+                          </h4>
+                          <p className="text-gray-600">
+                            {party.message || "No message provided"}
+                          </p>
+                        </div>
                       </div>
                     );
                   })}
