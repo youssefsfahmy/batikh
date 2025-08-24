@@ -25,7 +25,7 @@ const RSVPForm: React.FC = () => {
 
   const getStepsForParty = (): StepInfo[] => {
     return [
-      { id: 1, label: "Find Party", isActive: false, isCompleted: false },
+      { id: 1, label: "Find Invitation", isActive: false, isCompleted: false },
       {
         id: 2,
         label: "RSVP",

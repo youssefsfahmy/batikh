@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import { searchParties } from "@/utils/firebase";
-import { debounce } from "@/utils/storage";
 import type { Party } from "@/types/rsvp";
 
 interface Step1PartySearchProps {
@@ -17,8 +16,8 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const performSearch = useCallback(async (term: string) => {
-    if (!term.trim()) {
+  const handleSearch = async () => {
+    if (!searchTerm.trim()) {
       setSearchResults([]);
       setHasSearched(false);
       return;
@@ -26,7 +25,7 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
 
     setIsLoading(true);
     try {
-      const results = await searchParties(term);
+      const results = await searchParties(searchTerm);
       console.log("Search results:", results);
 
       setSearchResults(results);
@@ -37,16 +36,20 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  };
 
-  const debouncedSearch = useCallback(
-    (term: string) => debounce(performSearch, 300)(term),
-    [performSearch]
-  );
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
-  useEffect(() => {
-    debouncedSearch(searchTerm);
-  }, [searchTerm, debouncedSearch]);
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    //scroll the input field to the top of the page on mobile when focused
+    setTimeout(() => {
+      e.target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
 
   const handlePartySelect = (party: Party) => {
     onPartySelect(party);
@@ -59,24 +62,57 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
           Find Your Invitation
         </h3>
         <p className="text-gray-600 mb-4">
-          Enter your name or the name of someone in your party to find your
+          Enter your name or the name of someone in your group to find your
           invitation.
         </p>
       </div>
 
-      <div className="relative">
+      <div className="flex gap-3">
         <input
+          style={{
+            scrollMarginTop: "80px",
+          }}
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyPress={handleKeyPress}
+          onFocus={handleInputFocus}
           placeholder="Enter your name..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg  focus:border-transparent focus:ring-2 focus:ring-primary-50"
+          className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:border-transparent focus:ring-2 focus:ring-primary-50"
         />
-        {isLoading && (
-          <div className="absolute right-3 top-3">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-1000"></div>
-          </div>
-        )}
+        <button
+          onClick={handleSearch}
+          disabled={isLoading || !searchTerm.trim()}
+          className={`flex-1 px-3 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+            isLoading || !searchTerm.trim()
+              ? "bg-neutral-300 text-neutral-500 cursor-not-allowed"
+              : "bg-primary text-white hover:bg-primary-dark shadow-lg"
+          }`}
+        >
+          {isLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+              Search
+            </>
+          ) : (
+            <>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              Search
+            </>
+          )}
+        </button>
       </div>
 
       {/* Search Results */}
@@ -168,9 +204,12 @@ const Step1PartySearch: React.FC<Step1PartySearchProps> = ({
         </div>
       )}
 
-      {!hasSearched && searchTerm.length > 0 && !isLoading && (
+      {!hasSearched && (
         <div className="text-center py-8 text-gray-500">
-          <p>Start typing to search for your invitation...</p>
+          <p>
+            Enter your name above and click &quot;Search&quot; to find your
+            invitation.
+          </p>
         </div>
       )}
     </div>
