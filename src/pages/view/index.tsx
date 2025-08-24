@@ -15,6 +15,7 @@ const ViewPage: React.FC = () => {
   >("totals");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copiedPartyId, setCopiedPartyId] = useState<string | null>(null);
 
   // Filter states for parties tab
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +25,33 @@ const ViewPage: React.FC = () => {
   const [submissionFilter, setSubmissionFilter] = useState<
     "all" | "submitted" | "pending"
   >("all");
+
+  // Copy party link to clipboard
+  const copyPartyLink = async (party: PartyWithSubmission) => {
+    const baseUrl =
+      party.invitedToPrayer && party.invitedToParty
+        ? "https://youssefxsandra.com"
+        : "https://party.youssefxsandra.com";
+
+    const link = `${baseUrl}?partyId=${party.id}`;
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopiedPartyId(party.id);
+      setTimeout(() => setCopiedPartyId(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopiedPartyId(party.id);
+      setTimeout(() => setCopiedPartyId(null), 2000);
+    }
+  };
 
   const fetchParties = async () => {
     setIsLoading(true);
@@ -603,6 +631,55 @@ const ViewPage: React.FC = () => {
                                   </div>
                                 </div>
                               )}
+
+                              {/* Copy Link Button */}
+                              <div className="mt-3 pt-2 border-t border-gray-100">
+                                <button
+                                  onClick={() => copyPartyLink(party)}
+                                  className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200 rounded-lg transition-colors"
+                                >
+                                  {copiedPartyId === party.id ? (
+                                    <>
+                                      <svg
+                                        className="w-3 h-3"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M5 13l4 4L19 7"
+                                        />
+                                      </svg>
+                                      Link Copied!
+                                    </>
+                                  ) : (
+                                    <>
+                                      <svg
+                                        className="w-3 h-3"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <path
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                          strokeWidth={2}
+                                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                                        />
+                                      </svg>
+                                      Copy RSVP Link
+                                    </>
+                                  )}
+                                </button>
+                                <div className="text-xs text-gray-500 mt-1 text-center">
+                                  {party.invitedToPrayer && party.invitedToParty
+                                    ? "youssefxsandra.com"
+                                    : "party.youssefxsandra.com"}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         ))}

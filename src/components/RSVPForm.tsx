@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import ProgressBar from "@/components/ProgressBar";
 import Step1PartySearch from "@/components/PartySearch";
 import Step3PrayerRSVP from "@/components/CombinedRSVP";
 import PartyOnlyRSVP from "@/components/PartyOnlyRSVP";
 import Step6Confirmation from "@/components/Confirmation";
-import { submitRSVP } from "@/utils/firebase";
+import { submitRSVP, getParty } from "@/utils/firebase";
 import type { FormState, Party, GuestRSVP, YesNo } from "@/types/rsvp";
 
 interface StepInfo {
@@ -15,6 +16,7 @@ interface StepInfo {
 }
 
 const RSVPForm: React.FC = () => {
+  const router = useRouter();
   const [formState, setFormState] = useState<FormState>({
     rsvpsByGuest: {},
   });
@@ -22,6 +24,36 @@ const RSVPForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoadingParty, setIsLoadingParty] = useState(false);
+
+  // Auto-load party if partyId is in query params
+  useEffect(() => {
+    const loadPartyFromQuery = async () => {
+      const { partyId } = router.query;
+      if (partyId && typeof partyId === "string" && !formState.party) {
+        setIsLoadingParty(true);
+        try {
+          const party = await getParty(partyId);
+          if (party) {
+            handlePartySelect(party);
+            // Skip to step 2 if party is found
+            setCurrentStep(2);
+          } else {
+            setError("Party not found. Please search for your invitation.");
+          }
+        } catch (error) {
+          console.error("Error loading party:", error);
+          setError("Failed to load party. Please try searching manually.");
+        } finally {
+          setIsLoadingParty(false);
+        }
+      }
+    };
+
+    if (router.isReady) {
+      loadPartyFromQuery();
+    }
+  }, [router.isReady, router.query, formState.party]);
 
   const getStepsForParty = (): StepInfo[] => {
     return [
@@ -236,13 +268,21 @@ const RSVPForm: React.FC = () => {
       window.location.href = "/"; // Redirect to home page
     }
     if (currentStep === 2) {
-      setFormState((prev) => ({
-        ...prev,
-        rsvpsByGuest: {},
-        party: undefined,
-      }));
-      setError(null);
-      setCurrentStep(1);
+      // Check if we auto-loaded from query param
+      const { partyId } = router.query;
+      if (partyId && typeof partyId === "string") {
+        // If we came from a direct link, go back to home
+        window.location.href = "/";
+      } else {
+        // Otherwise, go back to party search
+        setFormState((prev) => ({
+          ...prev,
+          rsvpsByGuest: {},
+          party: undefined,
+        }));
+        setError(null);
+        setCurrentStep(1);
+      }
       return;
     }
     if (currentStep > 1) {
@@ -262,6 +302,15 @@ const RSVPForm: React.FC = () => {
       !formState.party?.confirmationCode);
 
   const renderCurrentStep = () => {
+    if (isLoadingParty) {
+      return (
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-neutral-600">Loading your invitation...</p>
+        </div>
+      );
+    }
+
     if (!formState.party) {
       return (
         <Step1PartySearch

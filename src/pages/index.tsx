@@ -1,12 +1,25 @@
 import Image from "next/image";
 import Head from "@/components/head";
 import Link from "next/link";
-// import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const isPartyEvent = process.env.NEXT_PUBLIC_IS_PARTY_EVENT === "true";
+  const router = useRouter();
 
   console.log("isPartyEvent:", isPartyEvent);
+
+  const handleRSVPClick = () => {
+    // Check for party ID in query params when RSVP is clicked
+    const { partyId } = router.query;
+    if (partyId && typeof partyId === "string") {
+      // Navigate to RSVP form with party ID
+      router.push(`/form?partyId=${partyId}`);
+    } else {
+      // Navigate to regular RSVP form
+      router.push("/form");
+    }
+  };
 
   return (
     <div className="flex flex-col justify-center items-center  w-full bg-[#636d557d]  ">
@@ -40,8 +53,8 @@ export default function Home() {
         >
           CLICK FOR LOCATION
         </Link>
-        <Link
-          href="/form"
+        <button
+          onClick={handleRSVPClick}
           className="font-[emoji] font-semibold text-[#f4eee2] px-6 py-[0.25rem] rounded-full bg-[#c76945]  hover:bg-[#de9376] 
            text-[0.65rem] md:text-lg  transition-all duration-300 ease-in-out text-center"
           style={{
@@ -53,7 +66,7 @@ export default function Home() {
           }}
         >
           CLICK TO RSVP
-        </Link>
+        </button>
       </div>
 
       {/* Apply the Gotham-Light font to the button */}
