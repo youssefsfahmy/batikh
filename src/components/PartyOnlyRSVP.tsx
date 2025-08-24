@@ -48,7 +48,7 @@ const PartyOnlyRSVP: React.FC<Step4PartyRSVPProps> = ({
                       className="w-4 h-4 text-primary-600 border-gray-300 focus:ring-primary-1000"
                     />
                     <span className="ml-3 text-gray-700">
-                      I&apos;ll be there
+                      I&apos;ll definitely be there!
                     </span>
                   </label>
 
