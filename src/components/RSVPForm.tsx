@@ -35,9 +35,15 @@ const RSVPForm: React.FC = () => {
         try {
           const party = await getParty(partyId);
           if (party) {
-            handlePartySelect(party);
-            // Skip to step 2 if party is found
-            setCurrentStep(2);
+            if (party.confirmationCode) {
+              // If already submitted, redirect to confirmation page
+              window.location.href = `/rsvp/${party.confirmationCode}`;
+              return;
+            } else {
+              handlePartySelect(party);
+              // Skip to step 2 if party is found
+              setCurrentStep(2);
+            }
           } else {
             setError("Party not found. Please search for your invitation.");
           }
