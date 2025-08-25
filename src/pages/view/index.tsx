@@ -171,7 +171,8 @@ const ViewPage: React.FC = () => {
 
   const getRSVPSummary = (guests: GuestRSVP[]) => {
     const prayerYes = guests.filter((g) => g.rsvpPrayer === "yes").length;
-    const partyYes = guests.filter((g) => g.rsvpParty === "yes").length;
+    const partyYes =
+      guests.filter((g) => g.rsvpParty === "yes").length - prayerYes;
     const meals = guests.filter((g) => g.meal).map((g) => g.meal);
 
     return {
@@ -193,9 +194,9 @@ const ViewPage: React.FC = () => {
     const totalPrayerAttending = allGuests.filter(
       (g) => g.rsvpPrayer === "yes"
     ).length;
-    const totalPartyAttending = allGuests.filter(
-      (g) => g.rsvpParty === "yes"
-    ).length;
+    const totalPartyAttending =
+      allGuests.filter((g) => g.rsvpParty === "yes").length -
+      totalPrayerAttending;
     const totalNotAttending = allGuests.filter(
       (g) => g.rsvpPrayer === "no" && g.rsvpParty === "no"
     ).length;

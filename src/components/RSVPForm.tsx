@@ -251,6 +251,7 @@ const RSVPForm: React.FC = () => {
         formState.rsvpsByGuest,
         formState.party.message || ""
       );
+      sendWhatsappNotification(formState, confirmationCode);
 
       setFormState((prev) => ({ ...prev, confirmationCode }));
     } catch (error) {
@@ -258,6 +259,36 @@ const RSVPForm: React.FC = () => {
       setError("Failed to submit RSVP. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const sendWhatsappNotification = async (
+    formState: FormState,
+    confirmationCode: string
+  ) => {
+    const text = formState.party?.members.map((member) => {
+      return `${member.firstName} ${member.lastName}`;
+    });
+
+    const linkToSubmission =
+      "https:youssefxsandra.com/rsvp/" + confirmationCode;
+
+    const encodedText = encodeURIComponent(
+      text
+        ? "New Submission from " + text.join("\n") + "\n" + linkToSubmission
+        : "New submission " + linkToSubmission
+    );
+    // use api send-whatsapp
+    try {
+      const res = await fetch(`/api/send-whatsapp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: encodedText }),
+      });
+
+      console.log(res);
+    } catch (error) {
+      console.log(error);
     }
   };
 
