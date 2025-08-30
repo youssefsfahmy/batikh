@@ -198,7 +198,7 @@ const ViewPage: React.FC = () => {
       allGuests.filter((g) => g.rsvpParty === "yes").length -
       totalPrayerAttending;
     const totalNotAttending = allGuests.filter(
-      (g) => g.rsvpPrayer === "no" && g.rsvpParty === "no"
+      (g) => g.rsvpParty === "no"
     ).length;
 
     const mealCounts = allGuests.reduce((acc, guest) => {
@@ -996,6 +996,18 @@ const ViewPage: React.FC = () => {
                             </span>
                             <span className="font-semibold text-neutral-500">
                               {totals.notAttending} guests
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-neutral-600">
+                              No Response
+                            </span>
+                            <span className="font-semibold text-neutral-500">
+                              {totals.totalMembers -
+                                (totals.prayerAttending +
+                                  totals.partyAttending +
+                                  totals.notAttending)}{" "}
+                              guests
                             </span>
                           </div>
                         </div>
